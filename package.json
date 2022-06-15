@@ -1,0 +1,21 @@
+{
+  "name": "discord-bot-boilerplate",
+  "version": "1.0.0",
+  "description": "TypeScript boiler plate for Discord Bots",
+  "main": "dist/index.js",
+  "scripts": {
+    "clean": "rm -rf dist && rm -rf disabledcommands.json",
+    "build": "tsc --listEmittedFiles -p .",
+    "start": "node ./dist/index.js > ./dist/debug.log 2> ./dist/error.log"
+  },
+  "author": "SeqSEE",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^13.7.0",
+    "dotenv": "^16.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.35",
+    "@types/ws": "^8.2.2"
+  }
+}
