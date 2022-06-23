@@ -1,6 +1,6 @@
-# discord bot boilerplate
+# mns-bot
 
-A simple TypeScript boilerplate for a Discord bot.
+A simple TypeScript Discord bot for querying the MNS.
 
 ### Prerequisites
 
@@ -9,16 +9,16 @@ A simple TypeScript boilerplate for a Discord bot.
 
 ### Setup
 
-- [Use this repo as a template](https://github.com/SeqSEE/discord-bot-boilerplate/generate)
+- clone this repo
 
 ```
-git clone https://github.com/YOUR-USERNAME/repository-name.git
+git clone https://github.com/SeqSEE/mns-bot.git
 ```
 
 - install the dependencies
 
 ```
-cd discord-bot-boilerplate
+cd mns-bot
 ```
 
 ```
