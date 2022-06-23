@@ -5,6 +5,7 @@ import {
   APIProvider,
   BaseResolver,
   getMNSAddress,
+  getMNSContract,
   MNS,
   profiles,
   Provider,
@@ -13,6 +14,7 @@ import {
 import {ethers} from 'ethers';
 import ABI from '@metrixnames/mnslib/lib/abi';
 import {fromHexAddress} from '@metrixnames/mnslib/lib/utils/AddressUtils';
+import {formatsByCoinType, formatsByName} from '@ensdomains/address-encoder';
 
 const network = 'MainNet';
 
@@ -31,10 +33,23 @@ export async function cmdAddr(
   }
   const provider = new APIProvider(network);
   const mns = new MNS(network, provider, getMNSAddress(network));
+  const mnsContract = getMNSContract(getMNSAddress(network), provider);
+
   const name = mns.name(m[1]);
+  const recordExists = await mnsContract.call('recordExists(bytes32)', [
+    name.hash,
+  ]);
+  const exists = recordExists ? recordExists.toString() === 'true' : false;
+  if (!exists) {
+    if (chan) chan.send(`<@${messageObj.author}> Error: Record does not exist`);
+    else if (user)
+      user.send(`<@${messageObj.author}> Error: Record does not exist`);
+    return;
+  }
   const resolverAddr = await name.getResolverAddr();
   if (resolverAddr === ethers.constants.AddressZero) {
-    // No resolver
+    if (chan) chan.send(`<@${messageObj.author}> Error: No resolver`);
+    else if (user) user.send(`<@${messageObj.author}> Error: No resolver`);
     return;
   }
   const resolver: profiles.AddrResolver = new (class
@@ -104,10 +119,27 @@ export async function cmdAddr(
     }
   })(provider);
   let supportsInterface = false;
-  const coin = undefined;
-  //TODO: get the coin from command parameters
+  const coin =
+    m.length >= 3
+      ? isNaN(Number(m[2]))
+        ? formatsByName[m[2].toUpperCase()]
+          ? BigInt(formatsByName[m[2].toUpperCase()].coinType)
+          : undefined
+        : BigInt(m[2])
+      : undefined;
+  if (m.length >= 3 && coin == undefined) {
+    if (chan)
+      chan.send(`<@${messageObj.author}> Error: Invalid Coin ID ${m[2]}`);
+    else if (user)
+      user.send(`<@${messageObj.author}> Error: Invalid Coin ID ${m[2]}`);
+    return;
+  }
   let getAddr;
-  if (coin) {
+  let coinType = 'MRX';
+  if (coin != undefined) {
+    coinType = formatsByCoinType[Number(coin)]
+      ? formatsByCoinType[Number(coin)].name
+      : 'UNKNOWN';
     supportsInterface = await resolver.supportsInterface('0xf1cb7e06');
     getAddr = async () => {
       return await resolver.addrByType(name.hash, coin);
@@ -119,11 +151,37 @@ export async function cmdAddr(
     };
   }
   if (!supportsInterface) {
-    // Not an addr resolver
+    if (chan)
+      chan.send(
+        `<@${messageObj.author}> Error: Resolver is not an Addr resolver`
+      );
+    else if (user)
+      user.send(
+        `<@${messageObj.author}> Error: Resolver is not an Addr resolver`
+      );
     return;
   }
   const addr = await getAddr();
-  //TODO: send the decoded address if any
-  if (chan) chan.send('pong!');
-  else if (user) user.send('pong!');
+  if (addr === '0x') {
+    if (chan)
+      chan.send(
+        `<@${messageObj.author}> Error: **${coinType}** address not set for ${m[1]}`
+      );
+    else if (user)
+      user.send(
+        `<@${messageObj.author}> Error: **${coinType}** address not set for ${m[1]}`
+      );
+    return;
+  }
+  const address = !coin
+    ? fromHexAddress(network, addr.replace('0x', ''))
+    : addr;
+  if (chan)
+    chan.send(
+      `<@${messageObj.author}> The **${coinType}** address for **${m[1]}** is \`\`${address}\`\``
+    );
+  else if (user)
+    user.send(
+      `<@${messageObj.author}> The **${coinType}** address for **${m[1]}** is \`\`${address}\`\``
+    );
 }

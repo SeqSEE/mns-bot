@@ -5,6 +5,7 @@ import {
   APIProvider,
   BaseResolver,
   getMNSAddress,
+  getMNSContract,
   MNS,
   profiles,
   Provider,
@@ -30,7 +31,19 @@ export async function cmdName(
   }
   const provider = new APIProvider(network);
   const mns = new MNS(network, provider, getMNSAddress(network));
+  const mnsContract = getMNSContract(getMNSAddress(network), provider);
+
   const name = mns.name(m[1]);
+  const recordExists = await mnsContract.call('recordExists(bytes32)', [
+    name.hash,
+  ]);
+  const exists = recordExists ? recordExists.toString() === 'true' : false;
+  if (!exists) {
+    if (chan) chan.send(`<@${messageObj.author}> Error: Record does not exist`);
+    else if (user)
+      user.send(`<@${messageObj.author}> Error: Record does not exist`);
+    return;
+  }
   const resolverAddr = await name.getResolverAddr();
   if (resolverAddr === ethers.constants.AddressZero) {
     // No resolver

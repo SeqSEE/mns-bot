@@ -11,6 +11,7 @@
   "author": "SeqSEE",
   "license": "MIT",
   "dependencies": {
+    "@ensdomains/address-encoder": "https://git@github.com/SeqSEE/address-encoder#patch-1",
     "@metrixnames/mnslib": "^1.3.7",
     "discord.js": "^13.7.0",
     "dotenv": "^16.0.1",
