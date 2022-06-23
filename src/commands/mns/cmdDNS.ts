@@ -12,6 +12,7 @@ import {
 } from '@metrixnames/mnslib';
 import {ethers} from 'ethers';
 import ABI from '@metrixnames/mnslib/lib/abi';
+import {RecordType} from './enum/RecordType';
 
 const network = 'MainNet';
 
@@ -26,6 +27,10 @@ export async function cmdDNS(
   let m = messageObj.content.split(/\s+/);
   if (m.length < 4) {
     // Invalid parameters
+    return;
+  }
+  if (!Object.values(RecordType).includes(Number(m[3]))) {
+    // Invalid DNS record type
     return;
   }
   const provider = new APIProvider(network);

@@ -12,15 +12,9 @@ import {
 } from '@metrixnames/mnslib';
 import {ethers} from 'ethers';
 import ABI from '@metrixnames/mnslib/lib/abi';
+import {EncodingType} from './enum/EncodingType';
 
 const network = 'MainNet';
-
-enum Encoding {
-  JSON = 1, //JSON
-  ZLIB_JSON = 2, //zlib-compressed JSON
-  CBOR = 4, //CBOR
-  URI = 8, //URI
-}
 
 export async function cmdABI(
   discord: DiscordHandler,
@@ -36,7 +30,7 @@ export async function cmdABI(
     // Invalid parameters
     return;
   }
-  if (!Object.values(Encoding).includes(Number(m[2]))) {
+  if (!Object.values(EncodingType).includes(Number(m[2]))) {
     // Invalid encoding
     return;
   }
