@@ -25,7 +25,15 @@ import DiscordHandler from './internal/DiscordHandler';
 import CommandHandler from './internal/CommandHandler';
 import MessageHandler from './internal/MessageHandler';
 import MessageObject from './interface/MessageObject';
-import { ping } from './commands/example/ping';
+import {ping} from './commands/example/ping';
+import {cmdText} from './commands/mns/cmdText';
+import {cmdABI} from './commands/mns/cmdABI';
+import {cmdAddr} from './commands/mns/cmdAddr';
+import {cmdContenthash} from './commands/mns/cmdContenthash';
+import {cmdDNS} from './commands/mns/cmdDNS';
+import {cmdInterface} from './commands/mns/cmdInterface';
+import {cmdName} from './commands/mns/cmdName';
+import {cmdPubkey} from './commands/mns/cmdPubkey';
 
 export default class Commands extends InternalCommands {
   constructor(
@@ -45,6 +53,90 @@ export default class Commands extends InternalCommands {
         if (Number(process.env.DEBUG) === 1)
           console.log(`${Date()} author: ${messageObj.author} command: ping`);
         return ping(this.getDiscord(), messageObj);
+      }
+    );
+    this.registerCommand(
+      'abi',
+      'abi',
+      [],
+      async (messageObj: MessageObject) => {
+        if (Number(process.env.DEBUG) === 1)
+          console.log(`${Date()} author: ${messageObj.author} command: abi`);
+        return cmdABI(this.getDiscord(), messageObj);
+      }
+    );
+    this.registerCommand(
+      'addr',
+      'addr',
+      [],
+      async (messageObj: MessageObject) => {
+        if (Number(process.env.DEBUG) === 1)
+          console.log(`${Date()} author: ${messageObj.author} command: addr`);
+        return cmdAddr(this.getDiscord(), messageObj);
+      }
+    );
+    this.registerCommand(
+      'contenthash',
+      'contenthash',
+      ['cthash'],
+      async (messageObj: MessageObject) => {
+        if (Number(process.env.DEBUG) === 1)
+          console.log(
+            `${Date()} author: ${messageObj.author} command: contenthash`
+          );
+        return cmdContenthash(this.getDiscord(), messageObj);
+      }
+    );
+    this.registerCommand(
+      'dns',
+      'dns',
+      [],
+      async (messageObj: MessageObject) => {
+        if (Number(process.env.DEBUG) === 1)
+          console.log(`${Date()} author: ${messageObj.author} command: dns`);
+        return cmdDNS(this.getDiscord(), messageObj);
+      }
+    );
+    this.registerCommand(
+      'interface',
+      'interface',
+      ['iface'],
+      async (messageObj: MessageObject) => {
+        if (Number(process.env.DEBUG) === 1)
+          console.log(
+            `${Date()} author: ${messageObj.author} command: interface`
+          );
+        return cmdInterface(this.getDiscord(), messageObj);
+      }
+    );
+    this.registerCommand(
+      'name',
+      'name',
+      [],
+      async (messageObj: MessageObject) => {
+        if (Number(process.env.DEBUG) === 1)
+          console.log(`${Date()} author: ${messageObj.author} command: name`);
+        return cmdName(this.getDiscord(), messageObj);
+      }
+    );
+    this.registerCommand(
+      'pubkey',
+      'pubkey',
+      [],
+      async (messageObj: MessageObject) => {
+        if (Number(process.env.DEBUG) === 1)
+          console.log(`${Date()} author: ${messageObj.author} command: pubkey`);
+        return cmdPubkey(this.getDiscord(), messageObj);
+      }
+    );
+    this.registerCommand(
+      'text',
+      'text',
+      ['txt'],
+      async (messageObj: MessageObject) => {
+        if (Number(process.env.DEBUG) === 1)
+          console.log(`${Date()} author: ${messageObj.author} command: ping`);
+        return cmdText(this.getDiscord(), messageObj);
       }
     );
   }
