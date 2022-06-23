@@ -57,7 +57,7 @@ export default class Commands extends InternalCommands {
     );
     this.registerCommand(
       'abi',
-      'abi',
+      'abi <name>',
       [],
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
@@ -67,7 +67,7 @@ export default class Commands extends InternalCommands {
     );
     this.registerCommand(
       'addr',
-      'addr',
+      'addr <name> (coin)',
       [],
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
@@ -78,7 +78,7 @@ export default class Commands extends InternalCommands {
     this.registerCommand(
       'contenthash',
       'contenthash',
-      ['cthash'],
+      ['cthash <name>'],
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(
@@ -89,7 +89,7 @@ export default class Commands extends InternalCommands {
     );
     this.registerCommand(
       'dns',
-      'dns',
+      'dns <name> <resource>',
       [],
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
@@ -99,7 +99,7 @@ export default class Commands extends InternalCommands {
     );
     this.registerCommand(
       'interface',
-      'interface',
+      'interface <name> <iterface id>',
       ['iface'],
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
@@ -111,7 +111,7 @@ export default class Commands extends InternalCommands {
     );
     this.registerCommand(
       'name',
-      'name',
+      'name <name>',
       [],
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
@@ -121,7 +121,7 @@ export default class Commands extends InternalCommands {
     );
     this.registerCommand(
       'pubkey',
-      'pubkey',
+      'pubkey <name>',
       [],
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)

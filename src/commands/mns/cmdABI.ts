@@ -1,6 +1,6 @@
 import DiscordHandler from '../../internal/DiscordHandler';
 import MessageObject from '../../interface/MessageObject';
-import {TextChannel} from 'discord.js';
+import {MessageAttachment, MessageEmbed, TextChannel} from 'discord.js';
 import {
   APIProvider,
   BaseResolver,
@@ -27,11 +27,20 @@ export async function cmdABI(
 
   let m = messageObj.content.split(/\s+/);
   if (m.length < 3) {
-    // Invalid parameters
+    if (chan) chan.send(`<@${messageObj.author}> Error: Invalid parameters`);
+    else if (user)
+      user.send(`<@${messageObj.author}> Error: Invalid parameters`);
     return;
   }
   if (!Object.values(EncodingType).includes(Number(m[2]))) {
-    // Invalid encoding
+    if (chan)
+      chan.send(
+        `<@${messageObj.author}> Error: Invalid encoding type '${m[2]}'`
+      );
+    else if (user)
+      user.send(
+        `<@${messageObj.author}> Error: Invalid encoding type '${m[2]}'`
+      );
     return;
   }
   const provider = new APIProvider(network);
@@ -39,7 +48,8 @@ export async function cmdABI(
   const name = mns.name(m[1]);
   const resolverAddr = await name.getResolverAddr();
   if (resolverAddr === ethers.constants.AddressZero) {
-    // No resolver
+    if (chan) chan.send(`<@${messageObj.author}> Error: No resolver`);
+    else if (user) user.send(`<@${messageObj.author}> Error: No resolver`);
     return;
   }
   const resolver: profiles.ABIResolver = new (class
@@ -91,11 +101,78 @@ export async function cmdABI(
   })(provider);
   const supportsInterface = await resolver.supportsInterface('0x2203ab56');
   if (!supportsInterface) {
-    // Not an ABI resolver
+    if (chan)
+      chan.send(
+        `<@${messageObj.author}> Error: Resolver is not an ABI resolver`
+      );
+    else if (user)
+      user.send(
+        `<@${messageObj.author}> Error: Resolver is not an ABI resolver`
+      );
     return;
   }
-  const abi = resolver.ABI(name.hash, BigInt(isNaN(Number())));
-  //TODO: send the ABI as a file
-  if (chan) chan.send('pong!');
-  else if (user) user.send('pong!');
+  const [contentType, data] = await resolver.ABI(
+    name.hash,
+    BigInt(isNaN(Number(m[2])) ? 0 : Number(m[2]))
+  );
+  if (Number(contentType) === 0) {
+    if (chan)
+      chan.send(
+        `<@${messageObj.author}> Error: ABI Content not set for ${m[1]}`
+      );
+    else if (user)
+      user.send(
+        `<@${messageObj.author}> Error: ABI Content not set for ${m[1]}`
+      );
+    return;
+  }
+  let encoding;
+  let extenstion = '.txt';
+  switch (Number(contentType)) {
+    case EncodingType.JSON:
+      encoding = 'JSON';
+      extenstion = '.json';
+      break;
+    case EncodingType.ZLIB_JSON:
+      encoding = 'zlib-compressed JSON';
+      break;
+    case EncodingType.CBOR:
+      encoding = 'CBOR';
+      break;
+    case EncodingType.URI:
+      encoding = 'URI';
+      break;
+    default:
+      encoding = 'unknown';
+      break;
+  }
+  if (!!data && data != '0x') {
+    const json = JSON.parse(
+      Buffer.from(data.replace('0x', ''), 'hex').toString()
+    );
+    const attachment = new MessageAttachment(
+      Buffer.from(JSON.stringify(json ? json : [], null, 2)),
+      `abi${extenstion}`
+    );
+
+    if (chan)
+      chan.send({
+        content: `<@${messageObj.author}> here is the ABI you requested for ${name.name}. It should be in ${encoding} format.`,
+        files: [attachment],
+      });
+    else if (user)
+      user.send({
+        content: `<@${messageObj.author}> here is the ABI you requested for ${name.name}. It should be in ${encoding} format.`,
+        files: [attachment],
+      });
+  } else {
+    if (chan)
+      chan.send(
+        `<@${messageObj.author}> Unable to find any ABI records for ${name.name} in ${encoding} format`
+      );
+    else if (user)
+      user.send(
+        `<@${messageObj.author}> Unable to find any ABI records for ${name.name} in ${encoding} format`
+      );
+  }
 }
