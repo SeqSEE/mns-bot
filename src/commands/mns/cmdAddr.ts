@@ -28,7 +28,9 @@ export async function cmdAddr(
     c instanceof TextChannel ? (c as TextChannel) : null;
   let m = messageObj.content.split(/\s+/);
   if (m.length < 2) {
-    // Invalid parameters
+    if (chan) chan.send(`<@${messageObj.author}> Error: Invalid parameters`);
+    else if (user)
+      user.send(`<@${messageObj.author}> Error: Invalid parameters`);
     return;
   }
   const provider = new APIProvider(network);

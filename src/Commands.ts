@@ -77,8 +77,8 @@ export default class Commands extends InternalCommands {
     );
     this.registerCommand(
       'contenthash',
-      'contenthash',
-      ['cthash <name>'],
+      'contenthash <name>',
+      ['cthash'],
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(

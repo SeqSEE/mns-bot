@@ -26,7 +26,9 @@ export async function cmdContenthash(
     c instanceof TextChannel ? (c as TextChannel) : null;
   let m = messageObj.content.split(/\s+/);
   if (m.length < 2) {
-    // Invalid parameters
+    if (chan) chan.send(`<@${messageObj.author}> Error: Invalid parameters`);
+    else if (user)
+      user.send(`<@${messageObj.author}> Error: Invalid parameters`);
     return;
   }
   const provider = new APIProvider(network);
@@ -46,7 +48,8 @@ export async function cmdContenthash(
   }
   const resolverAddr = await name.getResolverAddr();
   if (resolverAddr === ethers.constants.AddressZero) {
-    // No resolver
+    if (chan) chan.send(`<@${messageObj.author}> Error: No resolver`);
+    else if (user) user.send(`<@${messageObj.author}> Error: No resolver`);
     return;
   }
   const resolver: profiles.ContentHashResolver = new (class
@@ -80,12 +83,34 @@ export async function cmdContenthash(
   })(provider);
   const supportsInterface = await resolver.supportsInterface('0xbc1c58d1');
   if (!supportsInterface) {
-    // Not a Contenthash resolver
+    if (chan)
+      chan.send(
+        `<@${messageObj.author}> Error: Resolver is not an Contenthash resolver`
+      );
+    else if (user)
+      user.send(
+        `<@${messageObj.author}> Error: Resolver is not an Contenthash resolver`
+      );
     return;
   }
   const contenthash = await resolver.contenthash(name.hash);
-  //TODO: send the contenthash
-
-  if (chan) chan.send('pong!');
-  else if (user) user.send('pong!');
+  if (contenthash === '0x') {
+    if (chan)
+      chan.send(
+        `<@${messageObj.author}> Error: Contenthash not set for ${m[1]}`
+      );
+    else if (user)
+      user.send(
+        `<@${messageObj.author}> Error: Contenthash not set for ${m[1]}`
+      );
+    return;
+  }
+  if (chan)
+    chan.send(
+      `<@${messageObj.author}> The Contenthash for **${m[1]}** is \`\`${contenthash}\`\``
+    );
+  else if (user)
+    user.send(
+      `<@${messageObj.author}> The Contenthash for **${m[1]}** is \`\`${contenthash}\`\``
+    );
 }
