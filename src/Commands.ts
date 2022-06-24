@@ -131,7 +131,7 @@ export default class Commands extends InternalCommands {
     );
     this.registerCommand(
       'text',
-      'text',
+      'text <name> <key>',
       ['txt'],
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)

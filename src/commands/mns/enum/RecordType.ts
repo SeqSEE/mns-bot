@@ -1,4 +1,4 @@
-//IDs of the resources as per https://en.wikipedia.org/wiki/List_of_DNS_record_types
+// IDs of the resources as per https://en.wikipedia.org/wiki/List_of_DNS_record_types
 // prettier-ignore
 export enum RecordType {
   'A' = 1,           //RFC 1035[1]	Address record	Returns a 32-bit IPv4 address, most commonly used to map hostnames to an IP address of the host, but it is also used for DNSBLs, storing subnet masks in RFC 1101, etc.
@@ -47,8 +47,8 @@ export enum RecordType {
   'TXT' = 16,        //RFC 1035[1]	Text record	Originally for arbitrary human-readable text in a DNS record. Since the early 1990s, however, this record more often carries machine-readable data, such as specified by RFC 1464, opportunistic encryption, Sender Policy Framework, DKIM, DMARC, DNS-SD, etc.
   'URI' = 256,       //RFC 7553	Uniform Resource Identifier	Can be used for publishing mappings from hostnames to URIs.
   'ZONEMD' = 63,     //RFC 8976	Message Digests for DNS Zones	Provides a cryptographic message digest over DNS zone data at rest.
-  '*'=255,	       //RFC 1035[1]	All cached records	Returns all records of all types known to the name server. If the name server does not have any information on the name, the request will be forwarded on. The records returned may not be complete. For example, if there is both an A and an MX for a name, but the name server has only the A record cached, only the A record will be returned. Usually referred to as ANY (e.g., in dig, Windows nslookup, and Wireshark). In 2019, RFC8482 [14] standards-track publication led many DNS providers, including Cloudflare,[15] to provide only minimal responses to "ANY" queries, instead of enumerating records.
+  '*'=255,	         //RFC 1035[1]	All cached records	Returns all records of all types known to the name server. If the name server does not have any information on the name, the request will be forwarded on. The records returned may not be complete. For example, if there is both an A and an MX for a name, but the name server has only the A record cached, only the A record will be returned. Usually referred to as ANY (e.g., in dig, Windows nslookup, and Wireshark). In 2019, RFC8482 [14] standards-track publication led many DNS providers, including Cloudflare,[15] to provide only minimal responses to "ANY" queries, instead of enumerating records.
   'AXFR'=252,	       //RFC 1035[1]	Authoritative Zone Transfer	Transfer entire zone file from the primary name server to secondary name servers.
   'IXFR'=251,	       //RFC 1996	Incremental Zone Transfer	Requests a zone transfer of the given zone but only differences from a previous serial number. This request may be ignored and a full (AXFR) sent in response if the authoritative server is unable to fulfill the request due to configuration or lack of required deltas.
-  'OPT'=41,	       //RFC 6891	Option	This is a pseudo-record type needed to support EDNS.
+  'OPT'=41,	         //RFC 6891	Option	This is a pseudo-record type needed to support EDNS.
 }

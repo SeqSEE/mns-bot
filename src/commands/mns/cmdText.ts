@@ -26,71 +26,109 @@ export async function cmdText(
     c instanceof TextChannel ? (c as TextChannel) : null;
   let m = messageObj.content.split(/\s+/);
   if (m.length < 3) {
-    // Invalid parameters
-    return;
-  }
-  const provider = new APIProvider(network);
-  const mns = new MNS(network, provider, getMNSAddress(network));
-  const mnsContract = getMNSContract(getMNSAddress(network), provider);
-
-  const name = mns.name(m[1]);
-  const recordExists = await mnsContract.call('recordExists(bytes32)', [
-    name.hash,
-  ]);
-  const exists = recordExists ? recordExists.toString() === 'true' : false;
-  if (!exists) {
-    if (chan) chan.send(`<@${messageObj.author}> Error: Record does not exist`);
+    if (chan) chan.send(`<@${messageObj.author}> Error: Invalid parameters`);
     else if (user)
-      user.send(`<@${messageObj.author}> Error: Record does not exist`);
+      user.send(`<@${messageObj.author}> Error: Invalid parameters`);
     return;
   }
-  const resolverAddr = await name.getResolverAddr();
-  if (resolverAddr === ethers.constants.AddressZero) {
-    // No resolver
-    return;
-  }
-  const resolver: profiles.TextResolver = new (class
-    extends BaseResolver
-    implements profiles.TextResolver
-  {
-    constructor(provider: Provider) {
-      super(resolverAddr, provider, ABI.PublicResolver);
-    }
 
-    async setText(
-      node: string,
-      key: string,
-      value: string
-    ): Promise<Transaction> {
-      const tx = await this.send('setText(bytes32,string,string)', [
-        node,
-        key,
-        value,
-      ]);
-      const getReceipts = this.provider.getTxReceipts(
-        tx,
-        this.abi,
-        this.address
-      );
-      return {
-        txid: tx.txid,
-        getReceipts,
-      };
-    }
+  try {
+    const provider = new APIProvider(network);
+    const mns = new MNS(network, provider, getMNSAddress(network));
+    const mnsContract = getMNSContract(getMNSAddress(network), provider);
 
-    async text(node: string, key: string): Promise<string> {
-      const result = await this.call(' text(bytes32,string)', [node, key]);
-      if (result) {
-        return result.toString();
+    const name = mns.name(m[1]);
+    const recordExists = await mnsContract.call('recordExists(bytes32)', [
+      name.hash,
+    ]);
+    const exists = recordExists ? recordExists.toString() === 'true' : false;
+    if (!exists) {
+      if (chan)
+        chan.send(`<@${messageObj.author}> Error: Record does not exist`);
+      else if (user)
+        user.send(`<@${messageObj.author}> Error: Record does not exist`);
+      return;
+    }
+    const resolverAddr = await name.getResolverAddr();
+    if (resolverAddr === ethers.constants.AddressZero) {
+      if (chan) chan.send(`<@${messageObj.author}> Error: No resolver`);
+      else if (user) user.send(`<@${messageObj.author}> Error: No resolver`);
+      return;
+    }
+    const resolver: profiles.TextResolver = new (class
+      extends BaseResolver
+      implements profiles.TextResolver
+    {
+      constructor(provider: Provider) {
+        super(resolverAddr, provider, ABI.PublicResolver);
       }
-      return '';
+
+      async setText(
+        node: string,
+        key: string,
+        value: string
+      ): Promise<Transaction> {
+        const tx = await this.send('setText(bytes32,string,string)', [
+          node,
+          key,
+          value,
+        ]);
+        const getReceipts = this.provider.getTxReceipts(
+          tx,
+          this.abi,
+          this.address
+        );
+        return {
+          txid: tx.txid,
+          getReceipts,
+        };
+      }
+
+      async text(node: string, key: string): Promise<string> {
+        const result = await this.call(' text(bytes32,string)', [node, key]);
+        if (result) {
+          return result.toString();
+        }
+        return '';
+      }
+    })(provider);
+    const supportsInterface = await resolver.supportsInterface('0x59d1d43c');
+    if (!supportsInterface) {
+      if (chan)
+        chan.send(
+          `<@${messageObj.author}> Error: Resolver is not an Text resolver`
+        );
+      else if (user)
+        user.send(
+          `<@${messageObj.author}> Error: Resolver is not an Text resolver`
+        );
+      return;
     }
-  })(provider);
-  const supportsInterface = await resolver.supportsInterface('0x59d1d43c');
-  if (!supportsInterface) {
-    // Not a Text resolver
-    return;
+    const record = await resolver.text(name.hash, m[2]);
+    if (record.length === 0) {
+      if (chan)
+        chan.send(
+          `<@${messageObj.author}> Error: ${m[2]} text record not set for ${m[1]}`
+        );
+      else if (user)
+        user.send(
+          `<@${messageObj.author}> Error: ${m[2]} text record not set for ${m[1]}`
+        );
+      return;
+    }
+    if (chan)
+      chan.send(
+        `<@${messageObj.author}> The **${m[2]}** text record for **${m[1]}** is \`\`${record}\`\``
+      );
+    else if (user)
+      user.send(
+        `<@${messageObj.author}> The **${m[2]}** text record for **${m[1]}** is \`\`${record}\`\``
+      );
+  } catch (e) {
+    console.log(e);
+    if (chan)
+      chan.send(`<@${messageObj.author}> Error: An internal error occurred`);
+    else if (user)
+      user.send(`<@${messageObj.author}> Error: An internal error occurred`);
   }
-  if (chan) chan.send('pong!');
-  else if (user) user.send('pong!');
 }

@@ -34,114 +34,135 @@ export async function cmdDNS(
     // Invalid DNS record type
     return;
   }
-  const provider = new APIProvider(network);
-  const mns = new MNS(network, provider, getMNSAddress(network));
-  const mnsContract = getMNSContract(getMNSAddress(network), provider);
+  try {
+    const provider = new APIProvider(network);
+    const mns = new MNS(network, provider, getMNSAddress(network));
+    const mnsContract = getMNSContract(getMNSAddress(network), provider);
 
-  const name = mns.name(m[1]);
-  const recordExists = await mnsContract.call('recordExists(bytes32)', [
-    name.hash,
-  ]);
-  const exists = recordExists ? recordExists.toString() === 'true' : false;
-  if (!exists) {
-    if (chan) chan.send(`<@${messageObj.author}> Error: Record does not exist`);
+    const name = mns.name(m[1]);
+    const recordExists = await mnsContract.call('recordExists(bytes32)', [
+      name.hash,
+    ]);
+    const exists = recordExists ? recordExists.toString() === 'true' : false;
+    if (!exists) {
+      if (chan)
+        chan.send(`<@${messageObj.author}> Error: Record does not exist`);
+      else if (user)
+        user.send(`<@${messageObj.author}> Error: Record does not exist`);
+      return;
+    }
+    const resolverAddr = await name.getResolverAddr();
+    if (resolverAddr === ethers.constants.AddressZero) {
+      if (chan) chan.send(`<@${messageObj.author}> Error: No resolver`);
+      else if (user) user.send(`<@${messageObj.author}> Error: No resolver`);
+      return;
+    }
+    const resolver: profiles.DNSResolver = new (class
+      extends BaseResolver
+      implements profiles.DNSResolver
+    {
+      constructor(provider: Provider) {
+        super(resolverAddr, provider, ABI.PublicResolver);
+      }
+
+      async setDNSRecords(node: string, data: string): Promise<Transaction> {
+        const tx = await this.send('setDNSRecords(bytes32,bytes)', [
+          node,
+          data,
+        ]);
+        const getReceipts = this.provider.getTxReceipts(
+          tx,
+          this.abi,
+          this.address
+        );
+        return {
+          txid: tx.txid,
+          getReceipts,
+        };
+      }
+      async dnsRecord(
+        node: string,
+        name: string,
+        resource: bigint
+      ): Promise<string> {
+        const result = await this.call('dnsRecord(bytes32,bytes32,uint16)', [
+          node,
+          name,
+          `0x${resource.toString(16)}`,
+        ]);
+        if (result) {
+          return result.toString();
+        }
+        return '';
+      }
+
+      async hasDNSRecords(node: string, name: string): Promise<boolean> {
+        const result = await this.call('hasDNSRecords(bytes32,bytes32)', [
+          node,
+          name,
+        ]);
+        if (result) {
+          return result.toString() == 'true';
+        }
+        return false;
+      }
+
+      async clearDNSZone(node: string): Promise<Transaction> {
+        const tx = await this.send('clearDNSZone(bytes32)', [node]);
+        const getReceipts = this.provider.getTxReceipts(
+          tx,
+          this.abi,
+          this.address
+        );
+        return {
+          txid: tx.txid,
+          getReceipts,
+        };
+      }
+
+      async setZoneHash(node: string, hash: string): Promise<Transaction> {
+        const tx = await this.send('setZoneHash(bytes32,bytes)', [node, hash]);
+        const getReceipts = this.provider.getTxReceipts(
+          tx,
+          this.abi,
+          this.address
+        );
+        return {
+          txid: tx.txid,
+          getReceipts,
+        };
+      }
+
+      async zoneHash(node: string): Promise<string> {
+        const result = await this.call('zonehash(bytes32)', [node]);
+        if (result) {
+          return result.toString();
+        }
+        return '';
+      }
+    })(provider);
+    const supportsInterface = await resolver.supportsInterface('0xa8fa5682');
+    if (!supportsInterface) {
+      if (chan)
+        chan.send(
+          `<@${messageObj.author}> Error: Resolver is not an DNS resolver`
+        );
+      else if (user)
+        user.send(
+          `<@${messageObj.author}> Error: Resolver is not an DNS resolver`
+        );
+      return;
+    }
+
+    //TODO: send the DNS record
+
+    if (chan) chan.send('pong!');
+    else if (user) user.send('pong!');
+  } catch (e) {
+    console.log(e);
+    if (chan)
+      chan.send(`<@${messageObj.author}> Error: An internal error occurred`);
     else if (user)
-      user.send(`<@${messageObj.author}> Error: Record does not exist`);
-    return;
+      user.send(`<@${messageObj.author}> Error: An internal error occurred`);
   }
-  const resolverAddr = await name.getResolverAddr();
-  if (resolverAddr === ethers.constants.AddressZero) {
-    // No resolver
-    return;
-  }
-  const resolver: profiles.DNSResolver = new (class
-    extends BaseResolver
-    implements profiles.DNSResolver
-  {
-    constructor(provider: Provider) {
-      super(resolverAddr, provider, ABI.PublicResolver);
-    }
-
-    async setDNSRecords(node: string, data: string): Promise<Transaction> {
-      const tx = await this.send('setDNSRecords(bytes32,bytes)', [node, data]);
-      const getReceipts = this.provider.getTxReceipts(
-        tx,
-        this.abi,
-        this.address
-      );
-      return {
-        txid: tx.txid,
-        getReceipts,
-      };
-    }
-    async dnsRecord(
-      node: string,
-      name: string,
-      resource: bigint
-    ): Promise<string> {
-      const result = await this.call('dnsRecord(bytes32,bytes32,uint16)', [
-        node,
-        name,
-        `0x${resource.toString(16)}`,
-      ]);
-      if (result) {
-        return result.toString();
-      }
-      return '';
-    }
-
-    async hasDNSRecords(node: string, name: string): Promise<boolean> {
-      const result = await this.call('hasDNSRecords(bytes32,bytes32)', [
-        node,
-        name,
-      ]);
-      if (result) {
-        return result.toString() == 'true';
-      }
-      return false;
-    }
-
-    async clearDNSZone(node: string): Promise<Transaction> {
-      const tx = await this.send('clearDNSZone(bytes32)', [node]);
-      const getReceipts = this.provider.getTxReceipts(
-        tx,
-        this.abi,
-        this.address
-      );
-      return {
-        txid: tx.txid,
-        getReceipts,
-      };
-    }
-
-    async setZoneHash(node: string, hash: string): Promise<Transaction> {
-      const tx = await this.send('setZoneHash(bytes32,bytes)', [node, hash]);
-      const getReceipts = this.provider.getTxReceipts(
-        tx,
-        this.abi,
-        this.address
-      );
-      return {
-        txid: tx.txid,
-        getReceipts,
-      };
-    }
-
-    async zoneHash(node: string): Promise<string> {
-      const result = await this.call('zonehash(bytes32)', [node]);
-      if (result) {
-        return result.toString();
-      }
-      return '';
-    }
-  })(provider);
-  const supportsInterface = await resolver.supportsInterface('0xa8fa5682');
-  if (!supportsInterface) {
-    // Not a DNS resolver
-    return;
-  }
-  //TODO: send the contenthash
-
-  if (chan) chan.send('pong!');
-  else if (user) user.send('pong!');
 }

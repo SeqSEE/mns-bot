@@ -31,86 +31,98 @@ export async function cmdContenthash(
       user.send(`<@${messageObj.author}> Error: Invalid parameters`);
     return;
   }
-  const provider = new APIProvider(network);
-  const mns = new MNS(network, provider, getMNSAddress(network));
-  const mnsContract = getMNSContract(getMNSAddress(network), provider);
+  try {
+    const provider = new APIProvider(network);
+    const mns = new MNS(network, provider, getMNSAddress(network));
+    const mnsContract = getMNSContract(getMNSAddress(network), provider);
 
-  const name = mns.name(m[1]);
-  const recordExists = await mnsContract.call('recordExists(bytes32)', [
-    name.hash,
-  ]);
-  const exists = recordExists ? recordExists.toString() === 'true' : false;
-  if (!exists) {
-    if (chan) chan.send(`<@${messageObj.author}> Error: Record does not exist`);
-    else if (user)
-      user.send(`<@${messageObj.author}> Error: Record does not exist`);
-    return;
-  }
-  const resolverAddr = await name.getResolverAddr();
-  if (resolverAddr === ethers.constants.AddressZero) {
-    if (chan) chan.send(`<@${messageObj.author}> Error: No resolver`);
-    else if (user) user.send(`<@${messageObj.author}> Error: No resolver`);
-    return;
-  }
-  const resolver: profiles.ContentHashResolver = new (class
-    extends BaseResolver
-    implements profiles.ContentHashResolver
-  {
-    constructor(provider: Provider) {
-      super(resolverAddr, provider, ABI.PublicResolver);
+    const name = mns.name(m[1]);
+    const recordExists = await mnsContract.call('recordExists(bytes32)', [
+      name.hash,
+    ]);
+    const exists = recordExists ? recordExists.toString() === 'true' : false;
+    if (!exists) {
+      if (chan)
+        chan.send(`<@${messageObj.author}> Error: Record does not exist`);
+      else if (user)
+        user.send(`<@${messageObj.author}> Error: Record does not exist`);
+      return;
     }
-
-    async setContenthash(node: string, hash: string): Promise<Transaction> {
-      const tx = await this.send('setContenthash(bytes32,bytes)', [node, hash]);
-      const getReceipts = this.provider.getTxReceipts(
-        tx,
-        this.abi,
-        this.address
-      );
-      return {
-        txid: tx.txid,
-        getReceipts,
-      };
+    const resolverAddr = await name.getResolverAddr();
+    if (resolverAddr === ethers.constants.AddressZero) {
+      if (chan) chan.send(`<@${messageObj.author}> Error: No resolver`);
+      else if (user) user.send(`<@${messageObj.author}> Error: No resolver`);
+      return;
     }
-
-    async contenthash(node: string): Promise<string> {
-      const result = await this.call('contenthash(bytes32)', [node]);
-      if (result) {
-        return result.toString();
+    const resolver: profiles.ContentHashResolver = new (class
+      extends BaseResolver
+      implements profiles.ContentHashResolver
+    {
+      constructor(provider: Provider) {
+        super(resolverAddr, provider, ABI.PublicResolver);
       }
-      return '';
+
+      async setContenthash(node: string, hash: string): Promise<Transaction> {
+        const tx = await this.send('setContenthash(bytes32,bytes)', [
+          node,
+          hash,
+        ]);
+        const getReceipts = this.provider.getTxReceipts(
+          tx,
+          this.abi,
+          this.address
+        );
+        return {
+          txid: tx.txid,
+          getReceipts,
+        };
+      }
+
+      async contenthash(node: string): Promise<string> {
+        const result = await this.call('contenthash(bytes32)', [node]);
+        if (result) {
+          return result.toString();
+        }
+        return '';
+      }
+    })(provider);
+    const supportsInterface = await resolver.supportsInterface('0xbc1c58d1');
+    if (!supportsInterface) {
+      if (chan)
+        chan.send(
+          `<@${messageObj.author}> Error: Resolver is not an Contenthash resolver`
+        );
+      else if (user)
+        user.send(
+          `<@${messageObj.author}> Error: Resolver is not an Contenthash resolver`
+        );
+      return;
     }
-  })(provider);
-  const supportsInterface = await resolver.supportsInterface('0xbc1c58d1');
-  if (!supportsInterface) {
+    const contenthash = await resolver.contenthash(name.hash);
+    if (contenthash === '0x') {
+      if (chan)
+        chan.send(
+          `<@${messageObj.author}> Error: Contenthash not set for ${m[1]}`
+        );
+      else if (user)
+        user.send(
+          `<@${messageObj.author}> Error: Contenthash not set for ${m[1]}`
+        );
+      return;
+    }
     if (chan)
       chan.send(
-        `<@${messageObj.author}> Error: Resolver is not an Contenthash resolver`
+        `<@${messageObj.author}> The contenthash for **${m[1]}** is \`\`${contenthash}\`\``
       );
     else if (user)
       user.send(
-        `<@${messageObj.author}> Error: Resolver is not an Contenthash resolver`
+        `<@${messageObj.author}> The contenthash for **${m[1]}** is \`\`${contenthash}\`\``
       );
-    return;
-  }
-  const contenthash = await resolver.contenthash(name.hash);
-  if (contenthash === '0x') {
+  } catch (e) {
+    console.log(e);
     if (chan)
-      chan.send(
-        `<@${messageObj.author}> Error: Contenthash not set for ${m[1]}`
-      );
+      chan.send(`<@${messageObj.author}> Error: An internal error occurred`);
     else if (user)
-      user.send(
-        `<@${messageObj.author}> Error: Contenthash not set for ${m[1]}`
-      );
-    return;
+      user.send(`<@${messageObj.author}> Error: An internal error occurred`);
   }
-  if (chan)
-    chan.send(
-      `<@${messageObj.author}> The Contenthash for **${m[1]}** is \`\`${contenthash}\`\``
-    );
-  else if (user)
-    user.send(
-      `<@${messageObj.author}> The Contenthash for **${m[1]}** is \`\`${contenthash}\`\``
-    );
 }
