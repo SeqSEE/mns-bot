@@ -1,3 +1,5 @@
+![mns-bot](defaultIcon.png)
+
 # mns-bot
 
 A simple TypeScript Discord bot for querying the MNS.
