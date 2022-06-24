@@ -27,11 +27,16 @@ export async function cmdDNS(
     c instanceof TextChannel ? (c as TextChannel) : null;
   let m = messageObj.content.split(/\s+/);
   if (m.length < 4) {
-    // Invalid parameters
+    if (chan) chan.send(`<@${messageObj.author}> Error: Invalid parameters`);
+    else if (user)
+      user.send(`<@${messageObj.author}> Error: Invalid parameters`);
     return;
   }
   if (!Object.values(RecordType).includes(Number(m[3]))) {
-    // Invalid DNS record type
+    if (chan)
+      chan.send(`<@${messageObj.author}> Error: Invalid record type ${m[3]}`);
+    else if (user)
+      user.send(`<@${messageObj.author}>  Error: Invalid record type ${m[3]}`);
     return;
   }
   try {
@@ -153,11 +158,39 @@ export async function cmdDNS(
         );
       return;
     }
+    const hasRecord = await resolver.hasDNSRecords(name.hash, m[2]);
+    if (!hasRecord) {
+      if (chan)
+        chan.send(
+          `<@${messageObj.author}> Error: ${m[2]} DNS record not set for ${m[1]}`
+        );
+      else if (user)
+        user.send(
+          `<@${messageObj.author}> Error: ${m[2]} DNS record not set for ${m[1]}`
+        );
+      return;
+    }
+    const record = await resolver.dnsRecord(name.hash, m[2], BigInt(m[3]));
+    if (record.length === 0) {
+      if (chan)
+        chan.send(
+          `<@${messageObj.author}> Error: ${m[2]} DNS record not set for ${m[1]}`
+        );
+      else if (user)
+        user.send(
+          `<@${messageObj.author}> Error: ${m[2]} DNS record not set for ${m[1]}`
+        );
+      return;
+    }
 
-    //TODO: send the DNS record
-
-    if (chan) chan.send('pong!');
-    else if (user) user.send('pong!');
+    if (chan)
+      chan.send(
+        `<@${messageObj.author}> The ${m[2]} DNS record for **${m[1]}** is \`\`${record}\`\``
+      );
+    else if (user)
+      user.send(
+        `<@${messageObj.author}> The ${m[2]} DNS record for **${m[1]}** is \`\`${record}\`\``
+      );
   } catch (e) {
     console.log(e);
     if (chan)
