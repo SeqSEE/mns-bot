@@ -36,6 +36,7 @@ import {cmdName} from './commands/mns/cmdName';
 import {cmdPubkey} from './commands/mns/cmdPubkey';
 import {cmdResolver} from './commands/mns/cmdResolver';
 import {cmdOwner} from './commands/mns/cmdOwner';
+import {cmdInfo} from './commands/mns/cmdInfo';
 
 export default class Commands extends InternalCommands {
   constructor(
@@ -159,6 +160,16 @@ export default class Commands extends InternalCommands {
         if (Number(process.env.DEBUG) === 1)
           console.log(`${Date()} author: ${messageObj.author} command: owner`);
         return cmdResolver(this.getDiscord(), messageObj);
+      }
+    );
+    this.registerCommand(
+      'info',
+      'info <name>',
+      [],
+      async (messageObj: MessageObject) => {
+        if (Number(process.env.DEBUG) === 1)
+          console.log(`${Date()} author: ${messageObj.author} command: owner`);
+        return cmdInfo(this.getDiscord(), messageObj);
       }
     );
   }
