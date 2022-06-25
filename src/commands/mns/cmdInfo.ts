@@ -67,9 +67,12 @@ export async function cmdInfo(
     const split = m[1].split('.');
     const label = split[0];
     let node = '';
-    for (let i = 1; i < split.length; i++) {
-      node += i > 1 ? `.${split[i]}` : split[i];
+    if (split.length > 1) {
+      for (let i = 1; i < split.length; i++) {
+        node += i > 1 ? `.${split[i]}` : split[i];
+      }
     }
+
     const fields: EmbedFieldData[] = [
       {
         name: `Name`,
@@ -83,7 +86,7 @@ export async function cmdInfo(
       },
       {
         name: `Parent`,
-        value: node,
+        value: !!node ? node : ethers.constants.HashZero,
         inline: false,
       },
       {
