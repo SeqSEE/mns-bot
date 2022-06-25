@@ -34,6 +34,8 @@ import {cmdDNS} from './commands/mns/cmdDNS';
 import {cmdInterface} from './commands/mns/cmdInterface';
 import {cmdName} from './commands/mns/cmdName';
 import {cmdPubkey} from './commands/mns/cmdPubkey';
+import {cmdResolver} from './commands/mns/cmdResolver';
+import {cmdOwner} from './commands/mns/cmdOwner';
 
 export default class Commands extends InternalCommands {
   constructor(
@@ -135,8 +137,28 @@ export default class Commands extends InternalCommands {
       ['txt'],
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
-          console.log(`${Date()} author: ${messageObj.author} command: ping`);
+          console.log(`${Date()} author: ${messageObj.author} command: text`);
         return cmdText(this.getDiscord(), messageObj);
+      }
+    );
+    this.registerCommand(
+      'owner',
+      'owner <name>',
+      [],
+      async (messageObj: MessageObject) => {
+        if (Number(process.env.DEBUG) === 1)
+          console.log(`${Date()} author: ${messageObj.author} command: owner`);
+        return cmdOwner(this.getDiscord(), messageObj);
+      }
+    );
+    this.registerCommand(
+      'resolver',
+      'resolver <name>',
+      [],
+      async (messageObj: MessageObject) => {
+        if (Number(process.env.DEBUG) === 1)
+          console.log(`${Date()} author: ${messageObj.author} command: owner`);
+        return cmdResolver(this.getDiscord(), messageObj);
       }
     );
   }
