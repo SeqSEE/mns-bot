@@ -40,12 +40,20 @@ export default async function help(
   cmdHandler.getCommands().map((cmd) => {
     let command = cmdHandler.getCommand(cmd);
     if (command && command.isEnabled()) {
-      fields.push(command.getHelpSection());
-      return command.getHelpSection();
+      if (cmdHandler.protectedCommands.indexOf(command.getName()) === -1) {
+        fields.push(command.getHelpSection());
+        return command.getHelpSection();
+      } else if (
+        cmdHandler.isAdmin(messageObj.author) ||
+        messageObj.author === process.env.SUPER_ADMIN
+      ) {
+        fields.push(command.getHelpSection());
+        return command.getHelpSection();
+      }
     }
   });
   let helpEmbed = new MessageEmbed({
-    color: 8359053,
+    color: 7537523,
     author: {
       name: process.env.BOT_NAME as string,
       icon_url: process.env.ICON_URL as string,

@@ -36,6 +36,7 @@ export default class CommandHandler {
     this.admins = admins;
     this.protectedCommands = [
       `stop`,
+      `admins`,
       `removeadmin`,
       `addadmin`,
       `help`,
