@@ -95,7 +95,7 @@ let start = async (disabled: string[], admins: string[]) => {
       console.log;
     }
   });
-  client.on('message', async (msg: Message) => {
+  client.on('messageCreate', async (msg: Message) => {
     if (msg.author.id === client.user?.id) return;
     await msgHandler.handleMessage({
       channel: msg.channel.id,
