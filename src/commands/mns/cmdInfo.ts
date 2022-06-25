@@ -104,7 +104,7 @@ export async function cmdInfo(
     ];
 
     const embed = new MessageEmbed({
-      color: 8359053,
+      color: 7537523,
       author: {
         name: process.env.BOT_NAME as string,
         icon_url: process.env.ICON_URL as string,
