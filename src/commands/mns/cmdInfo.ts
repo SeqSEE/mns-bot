@@ -104,6 +104,11 @@ export async function cmdInfo(
         value: `${ttl}`,
         inline: false,
       },
+      {
+        name: `MNS App`,
+        value: `https://metrix.domains/app/name/${m[1]}`,
+        inline: false,
+      },
     ];
 
     const embed = new MessageEmbed({

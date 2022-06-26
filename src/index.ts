@@ -75,22 +75,17 @@ let start = async (disabled: string[], admins: string[]) => {
           )) as TextChannel)
         : null;
     if (chan)
-      chan.send(
-        `Awww comeon, I wanna sleep for just a bit more it is only ${Math.floor(
-          Date.now() / 1000
-        )}`
+      await chan.send(
+        `Have you heard of the Metrix Name Service?\nYou can do a query in discord, use the \`\`${process.env.CMD_PREFIX}help\`\` command to learn more.\nCheck out the MNS App at https://metrix.domains/app`
       );
     try {
-      client.user!.setStatus('online');
+      client.user?.setStatus('online');
       if ((process.env.DEBUG as unknown as number) === 1) console.log;
-      discord.util.setStatus({
+      await client.user?.setAvatar('./defaultIcon.png');
+      client.user?.setPresence({
+        activities: [{name: 'with the MNS'}],
         status: 'online',
-        activity: {
-          name: 'Like a BOT',
-          type: 'PLAYING',
-        },
-        afk: true,
-      } as PresenceData);
+      });
     } catch (e) {
       console.log;
     }

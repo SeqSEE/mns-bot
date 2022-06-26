@@ -43,17 +43,17 @@ export default abstract class CommandRegistry {
 
   public enableCommand(name: string): void {
     if (this.getCommandHandler().getCommandsMap().has(name)) {
-      (this.getCommandHandler()
-        .getCommandsMap()
-        .get(name) as Command).setEnabled(true);
+      (
+        this.getCommandHandler().getCommandsMap().get(name) as Command
+      ).setEnabled(true);
     }
   }
 
   public disableCommand(name: string): void {
     if (this.getCommandHandler().getCommandsMap().has(name)) {
-      (this.getCommandHandler()
-        .getCommandsMap()
-        .get(name) as Command).setEnabled(false);
+      (
+        this.getCommandHandler().getCommandsMap().get(name) as Command
+      ).setEnabled(false);
     }
   }
 
@@ -67,9 +67,16 @@ export default abstract class CommandRegistry {
     command: string,
     usage: string,
     aliases: string[],
+    description: string,
     handler: (messageObj: MessageObject) => void
   ): void {
-    this.getCommandHandler().registerCommand(command, usage, aliases, handler);
+    this.getCommandHandler().registerCommand(
+      command,
+      usage,
+      aliases,
+      description,
+      handler
+    );
   }
 
   public getCommandHandler(): CommandHandler {

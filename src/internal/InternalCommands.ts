@@ -46,6 +46,7 @@ export default class InternalCommands extends CommandRegistry {
       'stop',
       'stop',
       [],
+      'stop the bot',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(`${Date()} author: ${messageObj.author} command: stop`);
@@ -56,6 +57,7 @@ export default class InternalCommands extends CommandRegistry {
       'help',
       'help (command)',
       ['?'],
+      'display the help text',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(`${Date()} author: ${messageObj.author} command: help`);
@@ -66,6 +68,7 @@ export default class InternalCommands extends CommandRegistry {
       'enablecommand',
       'enablecommand <command>',
       ['encom'],
+      'enable a command',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(
@@ -82,6 +85,7 @@ export default class InternalCommands extends CommandRegistry {
       'disablecommand',
       'disablecommand <commmand>',
       ['discom'],
+      'disable a command',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(
@@ -98,6 +102,7 @@ export default class InternalCommands extends CommandRegistry {
       'admins',
       'admins',
       [],
+      'list the admins',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(`${Date()} author: ${messageObj.author} command: admins`);
@@ -108,6 +113,7 @@ export default class InternalCommands extends CommandRegistry {
       'addadmin',
       'addadmin <user>',
       [],
+      'add an admin',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(
@@ -124,6 +130,7 @@ export default class InternalCommands extends CommandRegistry {
       'removeadmin',
       'removeadmin <user>',
       ['remadmin', 'deladmin', 'deleteadmin'],
+      'remove an admin',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(
