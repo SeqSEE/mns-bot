@@ -51,6 +51,7 @@ export default class CommandHandler {
     command: string,
     usage: string,
     aliases: string[],
+    description: string,
     handler: (messageObj: MessageObject) => void
   ) {
     try {
@@ -59,7 +60,7 @@ export default class CommandHandler {
       } else {
         this.commandsMap.set(
           `${command}`,
-          new Command(`${command}`, usage, aliases, handler)
+          new Command(`${command}`, usage, aliases, description, handler)
         );
         this.commands.push(`${command}`);
         for (let alias of aliases) {
@@ -70,7 +71,7 @@ export default class CommandHandler {
           } else {
             this.commandsMap.set(
               `${alias}`,
-              new Command(`${alias}`, usage, subaliases, handler)
+              new Command(`${alias}`, usage, subaliases, description, handler)
             );
           }
         }

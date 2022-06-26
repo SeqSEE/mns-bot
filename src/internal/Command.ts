@@ -26,6 +26,7 @@ export default class Command {
   private command: string;
   private usage: string;
   private aliases: string[];
+  private description: string;
   private enabled: boolean;
   private handler: (messageObj: MessageObject) => void;
 
@@ -33,12 +34,14 @@ export default class Command {
     command: string,
     usage: string,
     aliases: string[],
+    description: string,
     handler: (messageObj: MessageObject) => void
   ) {
     this.enabled = true;
     this.command = command;
     this.usage = usage;
     this.aliases = aliases;
+    this.description = description;
     this.handler = handler;
   }
 
@@ -50,6 +53,10 @@ export default class Command {
     return this.usage;
   }
 
+  public getDescription(): string {
+    return this.description;
+  }
+
   public getAliases(): string[] {
     return this.aliases;
   }
@@ -57,7 +64,7 @@ export default class Command {
   public getHelpSection() {
     return {
       name: `${process.env.CMD_PREFIX}${this.getName()}`,
-      value: `${this.getUsage()}`,
+      value: `*${this.getDescription()}*\n**Usage**: ${this.getUsage()}`,
       inline: false,
     };
   }

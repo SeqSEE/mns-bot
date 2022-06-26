@@ -52,6 +52,7 @@ export default class Commands extends InternalCommands {
       'ping',
       'ping',
       [],
+      'example command that responds pong',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(`${Date()} author: ${messageObj.author} command: ping`);
@@ -62,6 +63,7 @@ export default class Commands extends InternalCommands {
       'abi',
       'abi <name>',
       [],
+      'get the ABI of an MNS name',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(`${Date()} author: ${messageObj.author} command: abi`);
@@ -72,6 +74,7 @@ export default class Commands extends InternalCommands {
       'addr',
       'addr <name> (coin)',
       [],
+      'get the address of an MNS name',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(`${Date()} author: ${messageObj.author} command: addr`);
@@ -82,6 +85,7 @@ export default class Commands extends InternalCommands {
       'contenthash',
       'contenthash <name>',
       ['cthash'],
+      'get the contenthash of an MNS name',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(
@@ -94,6 +98,7 @@ export default class Commands extends InternalCommands {
       'dns',
       'dns <name> <resource>',
       [],
+      'get a DNS record of an MNS name',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(`${Date()} author: ${messageObj.author} command: dns`);
@@ -104,6 +109,7 @@ export default class Commands extends InternalCommands {
       'interface',
       'interface <name> <iterface id>',
       ['iface'],
+      'get an interface of an MNS name',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(
@@ -116,6 +122,7 @@ export default class Commands extends InternalCommands {
       'name',
       'name <name>',
       [],
+      'get the name of an MNS name',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(`${Date()} author: ${messageObj.author} command: name`);
@@ -126,6 +133,7 @@ export default class Commands extends InternalCommands {
       'pubkey',
       'pubkey <name>',
       [],
+      'get the pubkey of an MNS name',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(`${Date()} author: ${messageObj.author} command: pubkey`);
@@ -136,6 +144,7 @@ export default class Commands extends InternalCommands {
       'text',
       'text <name> <key>',
       ['txt'],
+      'get a text record of an MNS name',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(`${Date()} author: ${messageObj.author} command: text`);
@@ -146,6 +155,7 @@ export default class Commands extends InternalCommands {
       'owner',
       'owner <name>',
       [],
+      'get the owner of an MNS name',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(`${Date()} author: ${messageObj.author} command: owner`);
@@ -156,6 +166,7 @@ export default class Commands extends InternalCommands {
       'resolver',
       'resolver <name>',
       [],
+      'get the resolver of an MNS name',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(`${Date()} author: ${messageObj.author} command: owner`);
@@ -166,6 +177,7 @@ export default class Commands extends InternalCommands {
       'info',
       'info <name>',
       [],
+      'get general information of an MNS name',
       async (messageObj: MessageObject) => {
         if (Number(process.env.DEBUG) === 1)
           console.log(`${Date()} author: ${messageObj.author} command: owner`);
