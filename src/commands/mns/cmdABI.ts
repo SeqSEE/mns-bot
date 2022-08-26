@@ -1,6 +1,6 @@
 import DiscordHandler from '../../internal/DiscordHandler';
 import MessageObject from '../../interface/MessageObject';
-import {MessageAttachment, TextChannel} from 'discord.js';
+import {AttachmentBuilder, TextChannel} from 'discord.js';
 import {
   BaseResolver,
   getMNSAddress,
@@ -163,9 +163,9 @@ export async function cmdABI(
       const json = JSON.parse(
         Buffer.from(data.replace('0x', ''), 'hex').toString()
       );
-      const attachment = new MessageAttachment(
+      const attachment = new AttachmentBuilder(
         Buffer.from(JSON.stringify(json ? json : [], null, 2)),
-        `abi${extenstion}`
+        {name: `abi${extenstion}`}
       );
 
       if (chan)
