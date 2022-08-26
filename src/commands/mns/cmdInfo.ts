@@ -1,13 +1,16 @@
 import DiscordHandler from '../../internal/DiscordHandler';
 import MessageObject from '../../interface/MessageObject';
-import {EmbedFieldData, MessageEmbed, TextChannel} from 'discord.js';
-import {ethers} from 'ethers';
 import {
-  APIProvider,
-  getMNSAddress,
-  getMNSContract,
-  MNS,
-} from '@metrixnames/mnslib';
+  APIEmbedField,
+  EmbedAuthorData,
+  EmbedBuilder,
+  EmbedData,
+  TextChannel,
+} from 'discord.js';
+import {ethers} from 'ethers';
+import {getMNSAddress, getMNSContract, MNS} from '@metrixnames/mnslib';
+
+import {APIProvider} from '@metrixcoin/metrilib';
 
 const network = 'MainNet';
 
@@ -73,7 +76,7 @@ export async function cmdInfo(
       }
     }
 
-    const fields: EmbedFieldData[] = [
+    const fields: APIEmbedField[] = [
       {
         name: `Name`,
         value: `${m[1]}`,
@@ -111,12 +114,12 @@ export async function cmdInfo(
       },
     ];
 
-    const embed = new MessageEmbed({
+    const embedData: EmbedData = {
       color: 7537523,
       author: {
         name: process.env.BOT_NAME as string,
         icon_url: process.env.ICON_URL as string,
-      },
+      } as EmbedAuthorData,
       title: `**MNS Name Info**`,
       url: '',
       description: `** **`,
@@ -129,7 +132,8 @@ export async function cmdInfo(
         iconURL: process.env.ICON_URL as string,
         text: process.env.BOT_NAME as string,
       },
-    });
+    };
+    const embed = new EmbedBuilder(embedData);
     if (chan)
       chan.send({
         embeds: [embed],

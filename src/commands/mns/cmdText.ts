@@ -2,17 +2,15 @@ import DiscordHandler from '../../internal/DiscordHandler';
 import MessageObject from '../../interface/MessageObject';
 import {TextChannel} from 'discord.js';
 import {
-  APIProvider,
   BaseResolver,
   getMNSAddress,
   getMNSContract,
   MNS,
   profiles,
-  Provider,
-  Transaction,
 } from '@metrixnames/mnslib';
 import {ethers} from 'ethers';
 import ABI from '@metrixnames/mnslib/lib/abi';
+import {APIProvider, Provider, Transaction} from '@metrixcoin/metrilib';
 
 const network = 'MainNet';
 

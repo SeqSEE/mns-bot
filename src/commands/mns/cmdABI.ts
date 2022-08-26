@@ -1,19 +1,17 @@
 import DiscordHandler from '../../internal/DiscordHandler';
 import MessageObject from '../../interface/MessageObject';
-import {MessageAttachment, MessageEmbed, TextChannel} from 'discord.js';
+import {AttachmentBuilder, TextChannel} from 'discord.js';
 import {
-  APIProvider,
   BaseResolver,
   getMNSAddress,
   getMNSContract,
   MNS,
   profiles,
-  Provider,
-  Transaction,
 } from '@metrixnames/mnslib';
 import {ethers} from 'ethers';
 import ABI from '@metrixnames/mnslib/lib/abi';
 import {EncodingType} from './enum/EncodingType';
+import {APIProvider, Provider, Transaction} from '@metrixcoin/metrilib';
 
 const network = 'MainNet';
 
@@ -165,9 +163,9 @@ export async function cmdABI(
       const json = JSON.parse(
         Buffer.from(data.replace('0x', ''), 'hex').toString()
       );
-      const attachment = new MessageAttachment(
+      const attachment = new AttachmentBuilder(
         Buffer.from(JSON.stringify(json ? json : [], null, 2)),
-        `abi${extenstion}`
+        {name: `abi${extenstion}`}
       );
 
       if (chan)

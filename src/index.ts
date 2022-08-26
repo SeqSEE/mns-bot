@@ -27,8 +27,9 @@ import {
   TextChannel,
   PresenceData,
   Message,
-  Intents,
+  IntentsBitField,
   ClientOptions,
+  Partials,
 } from 'discord.js';
 import DiscordHandler from './internal/DiscordHandler';
 import CommandHandler from './internal/CommandHandler';
@@ -39,11 +40,11 @@ let start = async (disabled: string[], admins: string[]) => {
   const envConf = dotenv.config();
   const options: ClientOptions = {
     intents: [
-      Intents.FLAGS.DIRECT_MESSAGES,
-      Intents.FLAGS.GUILDS,
-      Intents.FLAGS.GUILD_MESSAGES,
+      IntentsBitField.Flags.DirectMessages,
+      IntentsBitField.Flags.Guilds,
+      IntentsBitField.Flags.GuildMessages,
     ],
-    partials: ['CHANNEL'],
+    partials: [Partials.Channel],
   };
   const client: Client = new Client(options);
   const discord: DiscordHandler = new DiscordHandler(client);
