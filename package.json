@@ -14,7 +14,7 @@
     "@metrixcoin/metrilib": "^1.2.0-alpha",
     "@metrixnames/mnslib": "^2.0.3",
     "discord.js": "^14.4.0",
-    "dotenv": "^16.0.2",
+    "dotenv": "^16.0.3",
     "ethers": "^5.7.1"
   },
   "devDependencies": {
