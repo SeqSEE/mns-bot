@@ -40,7 +40,6 @@ export default class MessageHandler {
   }) {
     let m = msgObj.content.split(/\s+/);
     if (m[0].length > this.commandHandler.getCmdPrefix().length - 1) {
-      console.log(`>>>${m[0]}`)
       if (m[0].startsWith(this.commandHandler.getCmdPrefix())) {
         if (this.commandHandler) {
           const command = this.commandHandler.getCommand(
@@ -48,9 +47,7 @@ export default class MessageHandler {
               .toLowerCase()
               .substring(this.commandHandler.getCmdPrefix().length)
           );
-          console.log(`>>>${command != undefined}`)
-          if (command) {
-            
+          if (command) {            
             if (command.isEnabled()) {
               command.execute(msgObj);
             }
