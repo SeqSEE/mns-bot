@@ -11,8 +11,8 @@
   "author": "SeqSEE",
   "license": "MIT",
   "dependencies": {
-    "@metrixcoin/metrilib": "^1.2.0-alpha",
-    "@metrixnames/mnslib": "^2.0.3",
+    "@metrixcoin/metrilib": "^1.5.0-beta",
+    "@metrixnames/mnslib": "^2.1.1",
     "discord.js": "^14.4.0",
     "dotenv": "^16.0.2",
     "ethers": "^5.7.1"
