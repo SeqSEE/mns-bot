@@ -40,7 +40,7 @@ export async function cmdOwner(
       return;
     }
     const owner = await name.getOwner();
-    if (owner === ethers.constants.AddressZero) {
+    if (owner === ethers.ZeroAddress) {
       if (chan)
         chan.send(`<@${messageObj.author}> Error: Owner not set for ${m[1]}`);
       else if (user)

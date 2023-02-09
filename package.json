@@ -11,14 +11,14 @@
   "author": "SeqSEE",
   "license": "MIT",
   "dependencies": {
-    "@metrixcoin/metrilib": "^1.2.0-alpha",
-    "@metrixnames/mnslib": "^2.0.3",
-    "discord.js": "^14.4.0",
+    "@metrixcoin/metrilib": "^1.5.7-beta",
+    "@metrixnames/mnslib": "^2.1.7",
+    "discord.js": "^14.7.1",
     "dotenv": "^16.0.2",
-    "ethers": "^5.7.1"
+    "ethers": "^6.0.2"
   },
   "devDependencies": {
-    "@types/node": "^18.8.5",
-    "@types/ws": "^8.2.2"
+    "@types/node": "^18.13.0",
+    "@types/ws": "^8.5.4"
   }
 }

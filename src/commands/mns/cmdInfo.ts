@@ -47,7 +47,7 @@ export async function cmdInfo(
       return;
     }
     const owner = await name.getOwner();
-    if (owner === ethers.constants.AddressZero) {
+    if (owner === ethers.ZeroAddress) {
       if (chan)
         chan.send(`<@${messageObj.author}> Error: Owner not set for ${m[1]}`);
       else if (user)
@@ -55,7 +55,7 @@ export async function cmdInfo(
       return;
     }
     const resolver = await name.getResolver();
-    if (resolver === ethers.constants.AddressZero) {
+    if (resolver === ethers.ZeroAddress) {
       if (chan)
         chan.send(
           `<@${messageObj.author}> Error: Resolver not set for ${m[1]}`
@@ -89,7 +89,7 @@ export async function cmdInfo(
       },
       {
         name: `Parent`,
-        value: !!node ? node : ethers.constants.HashZero,
+        value: !!node ? node : ethers.ZeroHash,
         inline: false,
       },
       {

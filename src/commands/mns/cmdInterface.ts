@@ -59,7 +59,7 @@ export async function cmdInterface(
       return;
     }
     const resolverAddr = await name.getResolverAddr();
-    if (resolverAddr === ethers.constants.AddressZero) {
+    if (resolverAddr === ethers.ZeroAddress) {
       if (chan) chan.send(`<@${messageObj.author}> Error: No resolver`);
       else if (user) user.send(`<@${messageObj.author}> Error: No resolver`);
       return;
@@ -104,7 +104,7 @@ export async function cmdInterface(
         if (result) {
           return result.toString();
         }
-        return ethers.constants.AddressZero;
+        return ethers.ZeroAddress;
       }
     })(provider);
     const supportsInterface = await resolver.supportsInterface('0x01ffc9a7');
@@ -123,7 +123,7 @@ export async function cmdInterface(
       name.hash,
       m[2].startsWith('0x') ? m[2] : `0x${m[2]}`
     );
-    if (iface === ethers.constants.AddressZero) {
+    if (iface === ethers.ZeroAddress) {
       if (chan)
         chan.send(
           `<@${messageObj.author}> Error: Interface **${m[2]}** not set for ${m[1]}`
