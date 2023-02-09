@@ -55,7 +55,7 @@ export async function cmdDNS(
       return;
     }
     const resolverAddr = await name.getResolverAddr();
-    if (resolverAddr === ethers.constants.AddressZero) {
+    if (resolverAddr === ethers.ZeroAddress) {
       if (chan) chan.send(`<@${messageObj.author}> Error: No resolver`);
       else if (user) user.send(`<@${messageObj.author}> Error: No resolver`);
       return;

@@ -49,7 +49,7 @@ export async function cmdAddr(
       return;
     }
     const resolverAddr = await name.getResolverAddr();
-    if (resolverAddr === ethers.constants.AddressZero) {
+    if (resolverAddr === ethers.ZeroAddress) {
       if (chan) chan.send(`<@${messageObj.author}> Error: No resolver`);
       else if (user) user.send(`<@${messageObj.author}> Error: No resolver`);
       return;
@@ -102,11 +102,11 @@ export async function cmdAddr(
         const result = await this.call('addr(bytes32)', [node]);
         let mrxAddress: string | undefined = result
           ? result.toString()
-          : ethers.constants.AddressZero;
+          : ethers.ZeroAddress;
         if (convert === true) {
           mrxAddress = fromHexAddress(this.provider.network, mrxAddress);
         }
-        return mrxAddress ? mrxAddress : ethers.constants.AddressZero;
+        return mrxAddress ? mrxAddress : ethers.ZeroAddress;
       }
 
       async addrByType(node: string, coinType: bigint): Promise<string> {
@@ -117,7 +117,7 @@ export async function cmdAddr(
         if (result) {
           return result.toString();
         }
-        return ethers.constants.AddressZero;
+        return ethers.ZeroAddress;
       }
     })(provider);
     let supportsInterface = false;

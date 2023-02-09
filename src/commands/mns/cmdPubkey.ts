@@ -47,7 +47,7 @@ export async function cmdPubkey(
       return;
     }
     const resolverAddr = await name.getResolverAddr();
-    if (resolverAddr === ethers.constants.AddressZero) {
+    if (resolverAddr === ethers.ZeroAddress) {
       if (chan) chan.send(`<@${messageObj.author}> Error: No resolver`);
       else if (user) user.send(`<@${messageObj.author}> Error: No resolver`);
       return;
@@ -90,7 +90,7 @@ export async function cmdPubkey(
           ];
           return tup;
         }
-        return [ethers.constants.HashZero, ethers.constants.HashZero];
+        return [ethers.ZeroHash, ethers.ZeroHash];
       }
     })(provider);
     const supportsInterface = await resolver.supportsInterface('0xc8690233');
@@ -107,8 +107,8 @@ export async function cmdPubkey(
     }
     const [x, y] = await resolver.pubkey(name.hash);
     if (
-      (x === '0x' || x === ethers.constants.HashZero) &&
-      (y === '0x' || y === ethers.constants.HashZero)
+      (x === '0x' || x === ethers.ZeroHash) &&
+      (y === '0x' || y === ethers.ZeroHash)
     ) {
       if (chan)
         chan.send(`<@${messageObj.author}> Error: Pubkey not set for ${m[1]}`);

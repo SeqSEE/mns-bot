@@ -40,7 +40,7 @@ export async function cmdResolver(
       return;
     }
     const resolver = await name.getResolver();
-    if (resolver === ethers.constants.AddressZero) {
+    if (resolver === ethers.ZeroAddress) {
       if (chan)
         chan.send(
           `<@${messageObj.author}> Error: Resolver not set for ${m[1]}`
