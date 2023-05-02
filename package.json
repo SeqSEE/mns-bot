@@ -13,7 +13,7 @@
   "dependencies": {
     "@metrixcoin/metrilib": "^1.5.7-beta",
     "@metrixnames/mnslib": "^2.1.9",
-    "discord.js": "^14.7.1",
+    "discord.js": "^14.10.2",
     "dotenv": "^16.0.2",
     "ethers": "^6.0.2"
   },
