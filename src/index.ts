@@ -1,111 +1,163 @@
-/*
- * Copyright 2020-2021 Cryptech Services
- *
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
- */
-
-import init from './internal/init';
 import dotenv from 'dotenv';
 import {
+  REST,
+  Routes,
   Client,
-  TextChannel,
-  PresenceData,
-  Message,
-  IntentsBitField,
-  ClientOptions,
-  Partials,
+  GatewayIntentBits,
+  ActivityType,
+  Collection
 } from 'discord.js';
-import DiscordHandler from './internal/DiscordHandler';
-import CommandHandler from './internal/CommandHandler';
-import MessageHandler from './internal/MessageHandler';
-import Commands from './Commands';
+import { abi } from './commands/abi';
+import { addr } from './commands/addr';
+import { contenthash } from './commands/contenthash';
+import { dns } from './commands/dns';
+import { fromhexaddress } from './commands/fromhexaddress';
+import { info } from './commands/info';
+import { contractInterface } from './commands/contractInterface';
+import { name } from './commands/name';
+import { network } from './commands/network';
+import { owner } from './commands/owner';
+import { pubkey } from './commands/pubkey';
+import { resolver } from './commands/resolver';
+import { text } from './commands/text';
+import { tohexaddress } from './commands/tohexaddress';
 
-let start = async (disabled: string[], admins: string[]) => {
-  const envConf = dotenv.config();
-  const options: ClientOptions = {
-    intents: [
-      IntentsBitField.Flags.DirectMessages,
-      IntentsBitField.Flags.Guilds,
-      IntentsBitField.Flags.GuildMessages,
-      IntentsBitField.Flags.MessageContent
-    ],
-    partials: [Partials.Channel],
-  };
-  const client: Client = new Client(options);
-  const discord: DiscordHandler = new DiscordHandler(client);
-  const cmdHandler: CommandHandler = new CommandHandler(
-    <string>process.env.CMD_PREFIX,
-    admins
-  );
-  const msgHandler: MessageHandler = new MessageHandler(cmdHandler);
-  const commands = new Commands(discord, cmdHandler, msgHandler);
-  await commands.registerCommands();
-  for (let d of disabled) {
-    let cmd = cmdHandler.getCommandsMap().get(`${d as string}`);
-    if (cmd) {
-      cmd.setEnabled(false);
-      if (Number(process.env.DEBUG as unknown) === 1)
-        console.log(`Disabled ${cmd.getName()}`);
-    }
+dotenv.config();
+
+const commands = [
+  abi.data.toJSON(),
+  addr.data.toJSON(),
+  contenthash.data.toJSON(),
+  dns.data.toJSON(),
+  info.data.toJSON(),
+  contractInterface.data.toJSON(),
+  name.data.toJSON(),
+  network.data.toJSON(),
+  owner.data.toJSON(),
+  pubkey.data.toJSON(),
+  resolver.data.toJSON(),
+  text.data.toJSON(),
+  fromhexaddress.data.toJSON(),
+  tohexaddress.data.toJSON()
+];
+
+const cooldowns = new Collection<string, Collection<string, number>>();
+for (const command of commands) {
+  if (!cooldowns.has(command.name)) {
+    cooldowns.set(command.name, new Collection<string, number>());
+  }
+}
+
+const rest = new REST({ version: '10' }).setToken(process.env.TOKEN as string);
+
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+
+const start = async () => {
+  try {
+    console.log('Started refreshing application (/) commands.');
+
+    await rest.put(
+      Routes.applicationCommands(process.env.CLIENT_ID as string),
+      { body: commands }
+    );
+
+    console.log('Successfully reloaded application (/) commands.');
+  } catch (error) {
+    console.error(error);
   }
 
-  client.on('ready', async () => {
-    if ((process.env.DEBUG as unknown as number) === 1)
-      console.log(`Logged in as ${client.user!.tag}!`);
-    let chan: TextChannel | null =
-      (await client.channels.fetch(
-        process.env.DEFAULT_CHAN as string
-      )) instanceof TextChannel
-        ? ((await client.channels.fetch(
-            process.env.DEFAULT_CHAN as string
-          )) as TextChannel)
-        : null;
-    if (chan)
-      await chan.send(
-        `Have you heard of the Metrix Name Service?\nYou can do a query in discord, use the \`\`${process.env.CMD_PREFIX}help\`\` command to learn more.\nCheck out the MNS App at https://metrix.domains/app`
-      );
+  client.on('ready', () => {
+    console.log(`Logged in as ${client.user?.tag}!`);
     try {
       client.user?.setStatus('online');
       if ((process.env.DEBUG as unknown as number) === 1) console.log;
-      await client.user?.setAvatar('./defaultIcon.png');
+      client.user?.setAvatar('./defaultIcon.png');
       client.user?.setPresence({
-        activities: [{name: 'with the MNS'}],
-        status: 'online',
+        activities: [{ name: 'with the MNS' }],
+        status: 'online'
       });
     } catch (e) {
       console.log;
     }
   });
-  client.on('messageCreate', async (msg: Message) => {
-    if (msg.author.id === client.user?.id) return;
-    await msgHandler.handleMessage({
-      channel: msg.channel.id,
-      author: msg.author.id,
-      content: msg.content,
-    });
+
+  client.on('interactionCreate', async (interaction) => {
+    if (!interaction.isChatInputCommand()) return;
+    const defaultCooldownDuration = 10;
+    const cooldownAmount = defaultCooldownDuration * 1000;
+    const now = Date.now();
+    const timestamps =
+      cooldowns.get(interaction.commandName) ||
+      new Collection<string, number>();
+    if (timestamps.has(interaction.user.id)) {
+      const expirationTime =
+        timestamps.get(interaction.user.id)! + cooldownAmount;
+      if (now < expirationTime) {
+        const expiredTimestamp = Math.round(expirationTime / 1000);
+        await interaction.reply({
+          content: `Please wait, you are on a cooldown for \`${interaction.commandName}\`. You can use it again <t:${expiredTimestamp}:R>.`,
+          ephemeral: true
+        });
+        return;
+      }
+    }
+    timestamps.set(interaction.user.id, now);
+    switch (interaction.commandName) {
+      case 'abi':
+        await abi.execute(interaction);
+        break;
+      case 'addr':
+        await addr.execute(interaction);
+        break;
+      case 'contenthash':
+        await contenthash.execute(interaction);
+        break;
+      case 'dns':
+        await dns.execute(interaction);
+        break;
+      case 'info':
+        await info.execute(interaction);
+        break;
+      case 'interface':
+        await contractInterface.execute(interaction);
+        break;
+      case 'name':
+        await name.execute(interaction);
+        break;
+      case 'network':
+        await network.execute(interaction);
+        break;
+      case 'owner':
+        await owner.execute(interaction);
+        break;
+      case 'pubkey':
+        await pubkey.execute(interaction);
+        break;
+      case 'resolver':
+        await resolver.execute(interaction);
+        break;
+      case 'text':
+        await text.execute(interaction);
+        break;
+      default:
+        break;
+    }
   });
-  try {
-    await client.login(process.env.API_KEY);
-  } catch (e) {
-    console.log(JSON.stringify(e));
-    process.exit(1);
-  }
+
+  await client.login(process.env.TOKEN as string);
+  client.user?.setActivity(`${process.env.NETWORK} Metrix LGP`, {
+    type: ActivityType.Watching
+  });
+
+  const handleShutdown = async (signal: string) => {
+    console.log(`Received ${signal}. Logging out...`);
+    await client.destroy();
+    process.exit(0);
+  };
+
+  process.on('SIGINT', () => handleShutdown('SIGINT'));
+  process.on('SIGTERM', () => handleShutdown('SIGTERM'));
+  process.on('SIGUSR1', () => handleShutdown('SIGUSR1'));
 };
 
-init(start);
+start();
