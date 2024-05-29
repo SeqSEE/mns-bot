@@ -1,6 +1,6 @@
 {
-  "name": "lgp-bot",
-  "version": "1.0.0",
+  "name": "mns-bot",
+  "version": "2.0.0",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
