@@ -1,24 +1,24 @@
 {
-  "name": "mns-bot",
+  "name": "lgp-bot",
   "version": "1.0.0",
-  "description": "A bot that does MNS queries",
-  "main": "dist/index.js",
+  "main": "index.js",
   "scripts": {
-    "clean": "rm -rf dist && rm -rf disabledcommands.json",
-    "build": "tsc --listEmittedFiles -p .",
+    "build": "tsc",
     "start": "node ./dist/index.js"
   },
-  "author": "SeqSEE",
+  "author": "Cryptech Services",
   "license": "MIT",
+  "description": "",
   "dependencies": {
-    "@metrixcoin/metrilib": "^1.5.7-beta",
-    "@metrixnames/mnslib": "^2.1.9",
-    "discord.js": "^14.11.0",
-    "dotenv": "^16.0.2",
+    "@metrixcoin/metrilib": "^1.6.0-beta",
+    "@metrixnames/mnslib": "^2.2.1",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.5",
     "ethers": "^6.4.0"
   },
   "devDependencies": {
-    "@types/node": "^20.2.4",
-    "@types/ws": "^8.5.4"
+    "@types/node": "^20.11.19",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3"
   }
 }

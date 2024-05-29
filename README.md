@@ -6,7 +6,7 @@ A simple TypeScript Discord bot for querying the MNS.
 
 ### Prerequisites
 
-- [NodeJS 16.9+](https://nodejs.org/en/download/)
+- [NodeJS v16.11+](https://nodejs.org/en/download/)
 - [TypeScript](https://www.typescriptlang.org/#installation)
 
 ### Setup
