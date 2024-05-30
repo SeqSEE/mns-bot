@@ -121,7 +121,7 @@ const execute = async (interaction: ChatInputCommandInteraction<CacheType>) => {
       content: `The contenthash for **${n}** is \`\`${contenthash}\`\``
     });
   } catch (e) {
-    console.error('Error fetching data:', e);
+    console.log('Command `contenthash` Error:', e);
     await message.edit({
       content: `An unexpected error occurred. Please try again later.`
     });

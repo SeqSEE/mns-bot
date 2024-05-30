@@ -150,7 +150,7 @@ const execute = async (interaction: ChatInputCommandInteraction<CacheType>) => {
       content: `The interface implementer of \`\`${interfaceId}\`\` for **${n}** is \`\`${iface}\`\``
     });
   } catch (e) {
-    console.error('Error fetching data:', e);
+    console.log('Command `interface` Error:', e);
     await message.edit({
       content: `An unexpected error occurred. Please try again later.`
     });

@@ -45,7 +45,7 @@ const execute = async (interaction: ChatInputCommandInteraction<CacheType>) => {
       content: `The hex address for \`${a}\` is \`${hexAddress}\``
     });
   } catch (e) {
-    console.error('Error fetching data:', e);
+    console.log('Command `tohexaddress` Error:', e);
     await message.edit({
       content: `An unexpected error occurred. Please try again later.`
     });

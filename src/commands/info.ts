@@ -155,7 +155,7 @@ const execute = async (interaction: ChatInputCommandInteraction<CacheType>) => {
       content: `Here is the info for **${n}**`
     });
   } catch (e) {
-    console.error('Error fetching data:', e);
+    console.log('Command `info` Error:', e);
     await message.edit({
       content: `An unexpected error occurred. Please try again later.`
     });

@@ -139,7 +139,7 @@ const execute = async (interaction: ChatInputCommandInteraction<CacheType>) => {
       content: `The name for **${n}** is \`\`${nn}\`\``
     });
   } catch (e) {
-    console.error('Error fetching data:', e);
+    console.log('Command `name` Error:', e);
     await message.edit({
       content: `An unexpected error occurred. Please try again later.`
     });
