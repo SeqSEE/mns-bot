@@ -134,7 +134,7 @@ const execute = async (interaction: ChatInputCommandInteraction<CacheType>) => {
       content: `The pubkey for **${n}** is \`\`\`\nx:${x}\ny:${y}\n\`\`\``
     });
   } catch (e) {
-    console.error('Error fetching data:', e);
+    console.log('Command `pubkey` Error:', e);
     await message.edit({
       content: `An unexpected error occurred. Please try again later.`
     });

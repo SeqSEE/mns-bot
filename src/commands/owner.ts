@@ -64,7 +64,7 @@ const execute = async (interaction: ChatInputCommandInteraction<CacheType>) => {
       content: `The owner of **${n}** is \`\`${owner}\`\``
     });
   } catch (e) {
-    console.error('Error fetching data:', e);
+    console.log('Command `owner` Error:', e);
     await message.edit({
       content: `An unexpected error occurred. Please try again later.`
     });

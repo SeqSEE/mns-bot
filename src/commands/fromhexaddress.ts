@@ -50,7 +50,7 @@ const execute = async (interaction: ChatInputCommandInteraction<CacheType>) => {
       content: `The MRX address for \`${a}\` is \`${address}\``
     });
   } catch (e) {
-    console.error('Error fetching data:', e);
+    console.log('Command `fromhexaddress` Error:', e);
     await message.edit({
       content: `An unexpected error occurred. Please try again later.`
     });

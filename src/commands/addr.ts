@@ -173,7 +173,6 @@ const execute = async (interaction: ChatInputCommandInteraction<CacheType>) => {
     switch (interaction.options.getSubcommand()) {
       case 'coin':
         const c = interaction.options.getString('coin');
-        console.log(`addr coin: ${c}`);
         coin = c
           ? formatsByName[c.toUpperCase()]
             ? BigInt(formatsByName[c.toUpperCase()].coinType)
@@ -233,7 +232,10 @@ const execute = async (interaction: ChatInputCommandInteraction<CacheType>) => {
         address = fromHexAddress(provider.network, addr.replace('0x', ''));
       }
     } else {
-      address = addr;
+      const format = formatsByName[coinType];
+      address = format
+        ? format.encoder(Buffer.from(addr.replace('0x', ''), 'hex'))
+        : addr;
     }
 
     await message.edit({
@@ -242,7 +244,7 @@ const execute = async (interaction: ChatInputCommandInteraction<CacheType>) => {
       }\`\``
     });
   } catch (e) {
-    console.error('Error fetching data:', e);
+    console.log('Command `addr` Error:', e);
     await message.edit({
       content: `An unexpected error occurred. Please try again later.`
     });
