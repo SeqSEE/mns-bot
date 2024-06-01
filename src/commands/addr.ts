@@ -197,10 +197,22 @@ const execute = async (interaction: ChatInputCommandInteraction<CacheType>) => {
         return await resolver.addrByType(name.hash, coin);
       };
     } else {
-      supportsInterface = await resolver.supportsInterface('0x3b3b57de');
-      getAddr = async () => {
-        return await resolver.addr(name.hash);
-      };
+      const c = interaction.options.getString('coin');
+      const i = interaction.options.getInteger('id');
+      if (c) {
+        await message.edit({
+          content: `Error: coin **${c}** address is not supported by the @ensdomains/address-encoder library.`
+        });
+      } else if (i) {
+        await message.edit({
+          content: `Error: id **${i}** address is not supported by the @ensdomains/address-encoder library.`
+        });
+      } else {
+        await message.edit({
+          content: `Error: No coin or id provided.`
+        });
+      }
+      return;
     }
     if (!supportsInterface) {
       await message.edit({
