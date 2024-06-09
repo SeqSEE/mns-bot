@@ -1,4 +1,5 @@
 import { NetworkType } from '@metrixcoin/metrilib';
+import { namehash } from '@metrixnames/mnslib';
 import {
   ChatInputCommandInteraction,
   CacheType,
@@ -15,6 +16,7 @@ const data = new SlashCommandBuilder()
       .setDescription('The algorithm to use')
       .setRequired(true)
       .addChoices(
+        { name: 'namehash', value: 'namehash' },
         { name: 'keccak256', value: 'keccak256' },
         { name: 'sha256', value: 'sha256' },
         { name: 'sha512', value: 'sha512' },
@@ -90,6 +92,8 @@ const execute = async (interaction: ChatInputCommandInteraction<CacheType>) => {
       case 'ripemd160':
         result = ripemd160(data).toString();
         break;
+      case 'namehash':
+        result = namehash(data).toString();
       default:
         await interaction.reply({
           ephemeral: true,
