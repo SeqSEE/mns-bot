@@ -17,7 +17,7 @@
     "ethers": "^6.4.0"
   },
   "devDependencies": {
-    "@types/node": "^20.11.19",
+    "@types/node": "^22.2.0",
     "eslint": "^8.56.0",
     "typescript": "^5.3.3"
   }
