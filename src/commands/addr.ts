@@ -203,7 +203,7 @@ const execute = async (interaction: ChatInputCommandInteraction<CacheType>) => {
         await message.edit({
           content: `Error: coin **${c}** address is not supported by the @ensdomains/address-encoder library.`
         });
-      } else if (i) {
+      } else if (i == null) {
         await message.edit({
           content: `Error: id **${i}** address is not supported by the @ensdomains/address-encoder library.`
         });
