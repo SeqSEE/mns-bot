@@ -22,6 +22,7 @@ import { resolver } from './commands/resolver';
 import { text } from './commands/text';
 import { tohexaddress } from './commands/tohexaddress';
 import { hash } from './commands/hash';
+import { version } from './commands/version';
 
 dotenv.config();
 
@@ -40,7 +41,8 @@ const commands = [
   text.data.toJSON(),
   fromhexaddress.data.toJSON(),
   tohexaddress.data.toJSON(),
-  hash.data.toJSON()
+  hash.data.toJSON(),
+  version.data.toJSON()
 ];
 
 const cooldowns = new Collection<string, Collection<string, number>>();
@@ -149,6 +151,9 @@ const start = async () => {
         break;
       case 'hash':
         await hash.execute(interaction);
+        break;
+      case 'version':
+        await version.execute(interaction);
         break;
       default:
         break;
