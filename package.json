@@ -5,7 +5,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node ./dist/index.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "format": "prettier --write \"**/*.+(js|ts|json)\""
   },
   "author": "Cryptech Services",
   "license": "MIT",
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@types/node": "^22.4.0",
     "eslint": "^9.9.0",
+    "prettier": "^3.3.3",
     "typescript": "^5.5.4"
   }
 }

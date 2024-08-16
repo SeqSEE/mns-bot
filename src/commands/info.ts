@@ -50,8 +50,8 @@ const execute = async (interaction: ChatInputCommandInteraction<CacheType>) => {
       ? n.match(MetrixAddressRegex)
         ? mns.name(`${toHexAddress(n)}.addr.reverse`)
         : n.match(EthereumAddressRegex) || n.match(HexAddressRegex)
-        ? mns.name(`${n.toLowerCase().replace('0x', '')}.addr.reverse`)
-        : mns.name(n)
+          ? mns.name(`${n.toLowerCase().replace('0x', '')}.addr.reverse`)
+          : mns.name(n)
       : undefined;
     if (!name) {
       await message.edit({
