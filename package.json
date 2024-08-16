@@ -1,10 +1,11 @@
 {
   "name": "mns-bot",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node ./dist/index.js"
+    "start": "node ./dist/index.js",
+    "lint": "eslint ."
   },
   "author": "Cryptech Services",
   "license": "MIT",
