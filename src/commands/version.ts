@@ -6,7 +6,7 @@ import {
 
 const data = new SlashCommandBuilder()
   .setName('version')
-  .setDescription('Gets the version of the LGP bot');
+  .setDescription('Gets the version of the MNS bot');
 
 const execute = async (interaction: ChatInputCommandInteraction<CacheType>) => {
   const pkg = require('../../package.json');
